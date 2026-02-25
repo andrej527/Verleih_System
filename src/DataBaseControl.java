@@ -57,6 +57,28 @@ public class DataBaseControl {
 
     }
 
+    public static void deleteBuch(int isbn) {
+    String url = "jdbc:sqlite:./data/Bibliothek.db";
+    String sql = "DELETE FROM Buch WHERE ?";
+
+    try (var conn = DriverManager.getConnection(url);
+            var ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, isbn);
+
+            int deletedRows = ps.executeUpdate();
+
+            if (deletedRows > 0) {
+                System.out.println("Book deleted.");
+            } else {
+                System.out.println("No book found with that ISBN.");
+            }
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
     public static String getBuch() {
         String url = "jdbc:sqlite:./data/Bibliothek.db";
 
