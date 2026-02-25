@@ -14,20 +14,66 @@ public class Gui extends JFrame{
         buchArea.setText(DataBaseControl.getBuch());
         centerJPanel.add(new JScrollPane(buchArea));
 
+        JTextArea nutzerArea = new JTextArea(20, 60);
+        nutzerArea.setEditable(false);
+        nutzerArea.setText(DataBaseControl.getNutzer());
+        centerJPanel.add(new JScrollPane(nutzerArea));
+
         this.add(centerJPanel, BorderLayout.CENTER);
 
         JPanel bottomJPanel = new JPanel();
+        bottomJPanel.setLayout(new BoxLayout(bottomJPanel, BoxLayout.Y_AXIS));
+
+        //butzer edit
+        JPanel userEditPanel = new JPanel();
+        JLabel eingabeLabeluser = new JLabel("Nutzer hinzufügen (NutzerID / Name):");
+        userEditPanel.add(eingabeLabeluser);
+        JTextField userIdEingabeAdd = new JTextField(10);
+        userEditPanel.add(userIdEingabeAdd);
+        JTextField nameEingabeAdd = new JTextField(10);
+        userEditPanel.add(nameEingabeAdd);
+        
+
+        JButton addButtonUser = new JButton("Add");
+        userEditPanel.add(addButtonUser);
+
+        addButtonUser.addActionListener(e -> {
+            int userId = Integer.parseInt(userIdEingabeAdd.getText());
+            DataBaseControl.addNutzer(userId, nameEingabeAdd.getText());
+            nutzerArea.setText(DataBaseControl.getNutzer());
+        });
+
+
+        JLabel loeschenUserLabel = new JLabel("Nutzer löschen (NutzerID): ");
+        userEditPanel.add(loeschenUserLabel);
+        JTextField userIdEingabeDelete = new JTextField(10);
+        userEditPanel.add(userIdEingabeDelete);
+
+        JButton userDeleteButton = new JButton("Delete");
+        userEditPanel.add(userDeleteButton);
+
+        //nutzer delete einfügen
+        userDeleteButton.addActionListener(e -> {
+            int userId = Integer.parseInt(userIdEingabeDelete.getText());
+            DataBaseControl.deleteUser(userId);
+            nutzerArea.setText(DataBaseControl.getNutzer());
+        });
+
+
+
+        // buch edit
+        JPanel buchEditPanel = new JPanel();
         JLabel eingabeLabel = new JLabel("Buch hinzufügen (ISBN / Titel / verliehen):");
-        bottomJPanel.add(eingabeLabel);
+        buchEditPanel.add(eingabeLabel);
         JTextField isbnEingabeAdd = new JTextField(10);
-        bottomJPanel.add(isbnEingabeAdd);
+        buchEditPanel.add(isbnEingabeAdd);
         JTextField titelEingabeAdd = new JTextField(10);
-        bottomJPanel.add(titelEingabeAdd);
+        buchEditPanel.add(titelEingabeAdd);
         JTextField verliehenEingabeAdd = new JTextField(1);
-        bottomJPanel.add(verliehenEingabeAdd);
+        buchEditPanel.add(verliehenEingabeAdd);
 
         JButton addButton = new JButton("Add");
-        bottomJPanel.add(addButton);
+        buchEditPanel.add(addButton);
 
         addButton.addActionListener(e -> {
             int isbnNr = Integer.parseInt(isbnEingabeAdd.getText());
@@ -38,12 +84,12 @@ public class Gui extends JFrame{
 
 
         JLabel loeschenLabel = new JLabel("Buch löschen (ISBN): ");
-        bottomJPanel.add(loeschenLabel);
+        buchEditPanel.add(loeschenLabel);
         JTextField isbnEingabeDelete = new JTextField(10);
-        bottomJPanel.add(isbnEingabeDelete);
+        buchEditPanel.add(isbnEingabeDelete);
 
         JButton deleteButton = new JButton("Delete");
-        bottomJPanel.add(deleteButton);
+        buchEditPanel.add(deleteButton);
 
         deleteButton.addActionListener(e -> {
             int isbnNrDelete = Integer.parseInt(isbnEingabeDelete.getText());
@@ -51,11 +97,12 @@ public class Gui extends JFrame{
             buchArea.setText(DataBaseControl.getBuch());
         });
         
-
+        bottomJPanel.add(userEditPanel);
+        bottomJPanel.add(buchEditPanel);
         this.add(bottomJPanel, BorderLayout.SOUTH);
 
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(1000,600);
+        setSize(1000,800);
         setLocationRelativeTo(null);
         getContentPane().setBackground(new Color(250, 250, 250));
         setVisible(true);

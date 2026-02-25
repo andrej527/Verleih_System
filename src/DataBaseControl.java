@@ -8,13 +8,16 @@ public class DataBaseControl {
     public static void runDatabase() {
         String url = "jdbc:sqlite:./data/Bibliothek.db";
 
-        var sqlCreateTable = "CREATE TABLE IF NOT EXISTS Buch ("
+        var sqlCreateTableBuch = "CREATE TABLE IF NOT EXISTS Buch ("
                 + "	isbn INTEGER PRIMARY KEY,"
                 + "	titel text NOT NULL,"
                 + "	verliehen BOOL"
                 + ");";
 
-        //ResultSet resultSetInsert = null;
+        var sqlCreateTableNutzer = "CREATE TABLE IF NOT EXISTS Nutzer ("
+                + "nutzerID INTEGER PRIMARY KEY,"
+                + "name text NOT NULL"
+                + ");";
 
         try (var conn = DriverManager.getConnection(url)) {
             if (conn != null) {
@@ -23,7 +26,11 @@ public class DataBaseControl {
                 System.out.println("A new database has been created.");
             }
             try (var statement = conn.createStatement()) {
-            statement.execute(sqlCreateTable);
+            statement.execute(sqlCreateTableBuch);
+            }
+
+            try (var statement = conn.createStatement()) {
+            statement.execute(sqlCreateTableNutzer);
             }
             
 
@@ -45,6 +52,29 @@ public class DataBaseControl {
                 ps.setLong(1, isbn);
                 ps.setString(2, titel);
                 ps.setInt(3, verliehen);
+                int insertResult = ps.executeUpdate();
+                System.out.println("Result from insert: " + insertResult);
+            }
+        
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+
+
+    }
+
+    public static void addNutzer(int nutzerId, String name) {
+
+        String url = "jdbc:sqlite:./data/Bibliothek.db";
+
+        var sqlInsert = "INSERT OR IGNORE INTO Nutzer (nutzerID, name) VALUES" + "(?, ?)";
+
+        try (var conn = DriverManager.getConnection(url)) {
+            
+            try (PreparedStatement ps = conn.prepareStatement(sqlInsert)) {
+                ps.setLong(1, nutzerId);
+                ps.setString(2, name);
                 int insertResult = ps.executeUpdate();
                 System.out.println("Result from insert: " + insertResult);
             }
@@ -79,6 +109,28 @@ public class DataBaseControl {
         }
     }
 
+    public static void deleteUser(int userId) {
+    String url = "jdbc:sqlite:./data/Bibliothek.db";
+    String sql = "DELETE FROM Nutzer WHERE ?";
+
+    try (var conn = DriverManager.getConnection(url);
+            var ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
+
+            int deletedRows = ps.executeUpdate();
+
+            if (deletedRows > 0) {
+                System.out.println("User deleted.");
+            } else {
+                System.out.println("No user found with this Id");
+            }
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
     public static String getBuch() {
         String url = "jdbc:sqlite:./data/Bibliothek.db";
 
@@ -98,6 +150,35 @@ public class DataBaseControl {
                             .append(rs.getString("titel"))
                             .append(", VERLIEHEN: ")
                             .append(rs.getInt("verliehen"))
+                            .append("\n"); 
+                }
+            }
+
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+
+        return result.toString();
+    }
+
+    public static String getNutzer() {
+        String url = "jdbc:sqlite:./data/Bibliothek.db";
+
+        StringBuilder result = new StringBuilder();
+
+        var sqlSelect = "SELECT nutzerID, name FROM Nutzer";
+
+        try (var conn = DriverManager.getConnection(url)) {
+
+            try (var statement = conn.createStatement()) {
+                var rs = statement.executeQuery(sqlSelect);
+
+                while (rs.next()) {
+                    result.append("ID: ")
+                            .append(rs.getInt("nutzerId"))
+                            .append(", NAME: ")
+                            .append(rs.getString("name"))
                             .append("\n"); 
                 }
             }
