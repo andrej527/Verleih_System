@@ -33,7 +33,7 @@ public class DataBaseControl {
 
     }
 
-    public static void setBuch(int isbn, String titel, int verliehen) {
+    public static void addBuch(int isbn, String titel, int verliehen) {
 
         String url = "jdbc:sqlite:./data/Bibliothek.db";
 
@@ -86,21 +86,19 @@ public class DataBaseControl {
 
         var sqlSelect = "SELECT isbn, titel, verliehen FROM Buch";
 
-         try (var conn = DriverManager.getConnection(url)) {
+        try (var conn = DriverManager.getConnection(url)) {
 
             try (var statement = conn.createStatement()) {
                 var rs = statement.executeQuery(sqlSelect);
 
                 while (rs.next()) {
-                    result.append(
-                        "ISBN: " +
-                        rs.getInt("isbn") +
-                        " TITEL: " +
-                        rs.getString("titel") +
-                        " VERLIEHEN: " + 
-                        rs.getBoolean("verliehen") +
-                        " "
-                    );
+                    result.append("ISBN: ")
+                            .append(rs.getInt("isbn"))
+                            .append(", TITEL: ")
+                            .append(rs.getString("titel"))
+                            .append(", VERLIEHEN: ")
+                            .append(rs.getInt("verliehen"))
+                            .append("\n"); 
                 }
             }
 
