@@ -8,23 +8,34 @@ public class Gui extends JFrame{
     public Gui() {
         super("Bibliothek Verleih");
 
+        // alle bueacher
         JPanel centerJPanel = new JPanel();
         JTextArea buchArea = new JTextArea(20, 60);
         buchArea.setEditable(false);
         buchArea.setText(DataBaseControl.getBuch());
         centerJPanel.add(new JScrollPane(buchArea));
 
+        // alle nutzer
         JTextArea nutzerArea = new JTextArea(20, 60);
         nutzerArea.setEditable(false);
         nutzerArea.setText(DataBaseControl.getNutzer());
         centerJPanel.add(new JScrollPane(nutzerArea));
+
+        // verliehene bueacher
+        JTextArea verleihArea = new JTextArea(20, 60);
+        verleihArea.setEditable(false);
+        verleihArea.setText(DataBaseControl.getVerlieheneBuch());
+        centerJPanel.add(new JScrollPane(verleihArea));
 
         this.add(centerJPanel, BorderLayout.CENTER);
 
         JPanel bottomJPanel = new JPanel();
         bottomJPanel.setLayout(new BoxLayout(bottomJPanel, BoxLayout.Y_AXIS));
 
-        //butzer edit
+        //verleih edit
+        
+
+        //nutzer edit
         JPanel userEditPanel = new JPanel();
         JLabel eingabeLabeluser = new JLabel("Nutzer hinzufügen (NutzerID / Name):");
         userEditPanel.add(eingabeLabeluser);
@@ -52,7 +63,7 @@ public class Gui extends JFrame{
         JButton userDeleteButton = new JButton("Delete");
         userEditPanel.add(userDeleteButton);
 
-        //nutzer delete einfügen
+        
         userDeleteButton.addActionListener(e -> {
             int userId = Integer.parseInt(userIdEingabeDelete.getText());
             DataBaseControl.deleteUser(userId);
@@ -102,7 +113,7 @@ public class Gui extends JFrame{
         this.add(bottomJPanel, BorderLayout.SOUTH);
 
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(1000,800);
+        setSize(1000,1200);
         setLocationRelativeTo(null);
         getContentPane().setBackground(new Color(250, 250, 250));
         setVisible(true);
